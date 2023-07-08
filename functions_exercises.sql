@@ -4,23 +4,26 @@
 SHOW DATABASES;
 SELECT DATABASE();
 USE employees;
-
+-- **********************************
 SELECT CONCAT(first_name, ' ', last_name) AS full_name
   FROM employees
   WHERE last_name LIKE 'E%e';        
-       
+  -- **********************************     
        -- FROM: EMPLOYEES from employees schema
        -- where under the condition: last name starts and end with
        -- select concat make a new field alter
        -- as FULL NAME ALIAS THT NEW FIELD
        -- WE WANT UPPER OF THE CONCATENATION THt we get
        -- UPPER(CONCAT()
+-- **********************************
+/*
 SELECT DISTINCT
  first_name,
  last_name
  FROM employees
  WHERE last_name LIKE 'E%e';
- 
+ */
+
  /*
  SELECT COUNT(*) AS employee_count,
        (SELECT CONCAT(first_name, ' ', last_name)
@@ -40,24 +43,42 @@ WHERE last_name LIKE 'E%e';
         
         
   -- 3 Convert the names produced in your last query to all uppercase.
+  -- ********************************** 
   SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS full_name
   FROM employees
   WHERE last_name LIKE 'E%e';
+ -- **********************************  
+  -- # 4 Use a function to determine how many results were returned from your previous query.
+   -- **********************************  
+    SELECT COUNT(*) AS result_count
+FROM (
+  SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS full_name
+  FROM employees
+  WHERE last_name LIKE 'E%e'
+) AS subquery;
+    -- **********************************  
+    
+ -- # 5 Find all employees hired in the 90s and born on Christmas.
+ -- Use datediff() function to find how many days they have been working at the company (Hint: You will also need to use NOW() or CURDATE()),
   
-  -- 4
-  /*
-  Find all employees hired in the 90s and born on Christmas.
-  Use datediff() function to find how many days they have been working at the company (Hint: You will also need to use NOW() or CURDATE()),
-  */
+-- **********************************
+SELECT emp_no, CONCAT(first_name, ' ', last_name) AS full_name, DATEDIFF(NOW(), hire_date) AS days_worked
+FROM employees
+WHERE YEAR(hire_date) BETWEEN 1990 AND 1999
+  AND MONTH(birth_date) = 12;
+ -- **********************************
+/*
   -- ALL EMPLOYEES NO FIELD SPECIFIED
   -- TIME WORKED AT COMPANY IN DAYS
   -- CONDITION (WHERE) BORN ON 12-25 HIRED IN 90'S
-  
+/*
   SELECT DATEDIFF(year, '1990-01-01', '1999-12-31') AS DateDiff
 FROM employees 
 WHERE hire_date BETWEEN '1990-01-01' AND '1999-12-31'
     AND MONTH(birth_date) = 12
     AND DAY(birth_date) = 25;
+    */
+   
    -- ORDER BY hire_date DESC;
   -- SELECT CURDATE()
   -- SELECT DATEDIFF(year, '2017/08/25', '2011/08/25') AS DateDiff;
@@ -65,26 +86,28 @@ WHERE hire_date BETWEEN '1990-01-01' AND '1999-12-31'
   -- AND BIRTH_date LIKE '%12-25';
   -- DATEDIFF(NCURDATE(),HIRE_DATE) /365 AS DAYS_EMPLOYED
   -- MAX(SALARY). RETURNS A SINGLE VALUE
-  
+/*
 SELECT CONCAT(first_name, ' ', last_name) AS full_name, DATEDIFF(NOW(), hire_date) AS days_worked
 FROM employees
 WHERE YEAR(hire_date) BETWEEN 1990 AND 1999
   AND MONTH(birth_date) = 12
   AND DAY(birth_date) = 25;
-  
-  
-  -- 5
+  */
+ 
+  -- #6
   -- Find the smallest and largest current salary from the salaries table
-  SHOW TABLES;
-  -- salaries
+  -- **********************************
+SELECT MIN(salary) AS smallest_salary, MAX(salary) AS largest_salary
+FROM employees.salaries;
+
+-- **********************************
+  -- '38623','158220'
+ 
   /*  SELECT *
              FROM employees.salaries; */
 
-SELECT MIN(salary) AS smallest_salary, MAX(salary) AS largest_salary
-FROM employees.salaries;
-  -- '38623','158220'
 
--- 6
+-- # 7
 
 -- Use your knowledge of built in SQL functions to generate a username for all of the employees. A username should be all lowercase, 
 -- and consist of the first character of the employees first name, the first 4 characters of the employees last name, an underscore, 
@@ -107,9 +130,20 @@ FROM employees.salaries;
 +------------+------------+-----------+------------+
 10 rows in set (0.05 sec)
   
-*/
-
-  
+*/-- **********************************
+SELECT LOWER(CONCAT(
+    SUBSTRING(first_name, 1, 1),
+    SUBSTRING(last_name, 1, 4),
+    '_',
+    MONTH(birth_date),
+    RIGHT(YEAR(birth_date), 2)
+   )) AS username,
+   first_name,
+   last_name,
+   birth_date
+FROM employees;
+-- **********************************
+  /*
   SELECT CONCAT(
     LOWER(SUBSTRING(first_name, 1, 1)),
     SUBSTRING(last_name, 1, 4),
@@ -121,6 +155,7 @@ FROM employees.salaries;
   last_name,
   birth_date
 FROM employees;
+*/
 -- OUTPUT : flast_mmyy
 
 --  SELECT LEFT(first_name,1) FROM employees LIMIT 5;
@@ -141,5 +176,8 @@ FROM employees;
   -- SELECT LOWER(CONCAT(SUBSTR(first_name, 1, 1)), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date),RIGHT(YEAR(birth_date),2)) AS username , first_name,last_name,birth_date;
  
 -- SELECT CONCAT(LOWER(SUBSTR(first_name, 1, 1)), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2)) AS username, first_name,last_name,birth_date FROM employees;
- SELECT CONCAT(LOWER(SUBSTR(first_name, 1, 1)), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2)) AS username, first_name,last_name,birth_date FROM employees;
- SELECT CONCAT(LOWER(SUBSTR(first_name, 1, 1)), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2)) AS username, first_name,last_name,birth_date FROM employees;
+ -- SELECT CONCAT(LOWER(SUBSTR(first_name, 1, 1)), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2)) AS username, first_name,last_name,birth_date FROM employees;
+ -- SELECT CONCAT(LOWER(SUBSTR(first_name, 1, 1)), LOWER(SUBSTR(last_name, 1, 4)),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2)) AS username, first_name,last_name,birth_date FROM employees;
+-- SELECT LOWER(CONCAT(SUBSTR(first_name, 1, 1), SUBSTR(last_name, 1, 4),'_',MONTH(birth_date), RIGHT(YEAR(birth_date),2))) AS username, first_name,last_name,birth_date FROM employees;
+ -- SELECT LOWER(CONCAT(first_name(1),last_name(4),'-',MONTH(birth_date),YEAR(birth_date))) AS username,first_name,last_name,birth_date FROM employees;
+ 
